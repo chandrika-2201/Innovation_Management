@@ -1,0 +1,764 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F8F7F4;
+  --surface:#FFFFFF;
+  --surface2:#F2F0EC;
+  --blue-light:#EBF3FD;--blue:#5B9BD5;--blue-dark:#2E6BA8;
+  --green-light:#E8F5EE;--green:#4CAF7D;--green-dark:#2D7A52;
+  --lavender-light:#EEE8F8;--lavender:#8B72D4;--lavender-dark:#5C3FA8;
+  --peach-light:#FDF0E8;--peach:#E8895A;--peach-dark:#B5581F;
+  --rose-light:#FDE8EF;--rose:#D4698A;--rose-dark:#9B3558;
+  --teal-light:#E4F4F4;--teal:#4FBBBB;--teal-dark:#2B8585;
+  --text:#1E1E2D;--text2:#5A5A72;--text3:#9898A8;
+  --border:#E4E2DC;--border2:#D0CEC8;
+  --shadow:0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.04);
+  --shadow-lg:0 4px 16px rgba(0,0,0,0.08), 0 12px 40px rgba(0,0,0,0.06);
+  --radius:12px;--radius-lg:16px;--radius-xl:24px;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+.app{display:flex;min-height:100vh}
+
+/* SIDEBAR */
+.sidebar{width:240px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;height:100vh;z-index:100}
+.sidebar-logo{padding:24px 20px 20px;border-bottom:1px solid var(--border)}
+.logo-mark{display:flex;align-items:center;gap:10px}
+.logo-icon{width:34px;height:34px;background:linear-gradient(135deg,var(--blue) 0%,var(--lavender) 100%);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.logo-text{font-family:'DM Serif Display';font-size:15px;color:var(--text);line-height:1.2}
+.logo-sub{font-size:10px;color:var(--text3);font-weight:400;letter-spacing:.3px}
+.sidebar-nav{flex:1;padding:16px 12px;overflow-y:auto}
+.nav-section-title{font-size:10px;font-weight:600;color:var(--text3);letter-spacing:1px;text-transform:uppercase;padding:8px 8px 6px;margin-top:8px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;cursor:pointer;transition:all .15s;font-size:13.5px;color:var(--text2);font-weight:400;margin-bottom:2px;border:none;background:transparent;width:100%;text-align:left}
+.nav-item:hover{background:var(--surface2);color:var(--text)}
+.nav-item.active{background:var(--blue-light);color:var(--blue-dark);font-weight:500}
+.nav-item .nav-icon{font-size:16px;width:20px;text-align:center;flex-shrink:0}
+.nav-badge{margin-left:auto;background:var(--peach-light);color:var(--peach-dark);font-size:10px;font-weight:600;padding:2px 7px;border-radius:20px}
+.sidebar-footer{padding:16px;border-top:1px solid var(--border)}
+.user-card{display:flex;align-items:center;gap:10px;padding:10px;background:var(--surface2);border-radius:var(--radius);cursor:pointer}
+.avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--lavender-light),var(--lavender));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:var(--lavender-dark);flex-shrink:0}
+.user-info .name{font-size:13px;font-weight:500;color:var(--text)}
+.user-info .role{font-size:11px;color:var(--text3)}
+
+/* MAIN */
+.main{margin-left:240px;flex:1;display:flex;flex-direction:column}
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 28px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.topbar-left{display:flex;align-items:center;gap:12px}
+.page-title{font-size:16px;font-weight:500;color:var(--text)}
+.breadcrumb{font-size:12px;color:var(--text3)}
+.topbar-actions{display:flex;align-items:center;gap:10px}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;border:none;transition:all .15s;font-family:'DM Sans',sans-serif}
+.btn-primary{background:var(--blue);color:#fff}
+.btn-primary:hover{background:var(--blue-dark)}
+.btn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border2)}
+.btn-ghost:hover{background:var(--surface2);color:var(--text)}
+.notif-btn{width:34px;height:34px;border-radius:8px;background:var(--surface2);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;position:relative}
+.notif-dot{position:absolute;top:6px;right:6px;width:7px;height:7px;background:var(--peach);border-radius:50%;border:2px solid var(--surface)}
+
+.content{padding:28px;flex:1}
+
+/* STAT CARDS */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+.stat-card{background:var(--surface);border-radius:var(--radius-lg);padding:20px;border:1px solid var(--border);transition:transform .2s,box-shadow .2s}
+.stat-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg)}
+.stat-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px}
+.stat-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px}
+.stat-badge{font-size:11px;font-weight:600;padding:3px 8px;border-radius:20px}
+.badge-up{background:var(--green-light);color:var(--green-dark)}
+.badge-down{background:var(--rose-light);color:var(--rose-dark)}
+.stat-value{font-size:28px;font-weight:600;color:var(--text);line-height:1;margin-bottom:4px}
+.stat-label{font-size:12.5px;color:var(--text3)}
+
+/* CHARTS ROW */
+.charts-row{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:24px}
+.chart-card{background:var(--surface);border-radius:var(--radius-lg);border:1px solid var(--border);padding:22px}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.card-title{font-size:14.5px;font-weight:600;color:var(--text)}
+.card-sub{font-size:12px;color:var(--text3);margin-top:2px}
+.chip{font-size:11px;padding:4px 10px;border-radius:20px;font-weight:500}
+.chip-blue{background:var(--blue-light);color:var(--blue-dark)}
+.chip-green{background:var(--green-light);color:var(--green-dark)}
+.chip-lavender{background:var(--lavender-light);color:var(--lavender-dark)}
+.chip-peach{background:var(--peach-light);color:var(--peach-dark)}
+
+/* BAR CHART */
+.bar-chart{display:flex;align-items:flex-end;gap:8px;height:140px}
+.bar-group{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1}
+.bar-track{height:120px;display:flex;align-items:flex-end;width:100%;gap:3px}
+.bar{border-radius:5px 5px 0 0;transition:opacity .2s;cursor:pointer;min-width:10px}
+.bar:hover{opacity:.8}
+.bar-label{font-size:10px;color:var(--text3);white-space:nowrap}
+
+/* DONUT */
+.donut-wrap{display:flex;flex-direction:column;align-items:center;gap:16px}
+.donut-svg{width:140px;height:140px}
+.donut-legend{width:100%;display:flex;flex-direction:column;gap:8px}
+.legend-row{display:flex;align-items:center;gap:8px;justify-content:space-between}
+.legend-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.legend-label{font-size:12.5px;color:var(--text2);flex:1}
+.legend-pct{font-size:12.5px;font-weight:600;color:var(--text)}
+
+/* SECOND ROW */
+.second-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:24px}
+
+/* SKILL BARS */
+.skill-list{display:flex;flex-direction:column;gap:12px}
+.skill-item{}
+.skill-meta{display:flex;justify-content:space-between;margin-bottom:6px}
+.skill-name{font-size:13px;color:var(--text2)}
+.skill-pct{font-size:12px;font-weight:600;color:var(--text)}
+.skill-track{height:6px;background:var(--surface2);border-radius:10px;overflow:hidden}
+.skill-fill{height:100%;border-radius:10px;transition:width 1s}
+
+/* INSIGHTS */
+.insight-list{display:flex;flex-direction:column;gap:10px}
+.insight-item{display:flex;gap:10px;padding:12px;background:var(--surface2);border-radius:10px;cursor:pointer;transition:background .15s}
+.insight-item:hover{background:var(--blue-light)}
+.insight-icon{font-size:18px;flex-shrink:0;width:24px}
+.insight-text{font-size:12.5px;color:var(--text2);line-height:1.4}
+.insight-text strong{color:var(--text);display:block;margin-bottom:2px;font-size:13px}
+
+/* SCATTER PLOT */
+.scatter-wrap{position:relative}
+.scatter-svg{width:100%;height:160px}
+
+/* TABLE */
+.table-card{background:var(--surface);border-radius:var(--radius-lg);border:1px solid var(--border);padding:0;overflow:hidden;margin-bottom:24px}
+.table-header-bar{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--border)}
+table{width:100%;border-collapse:collapse}
+th{font-size:11.5px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;padding:10px 22px;text-align:left;background:var(--surface2)}
+td{padding:13px 22px;font-size:13px;color:var(--text2);border-bottom:1px solid var(--border)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--surface2)}
+.status-pill{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11.5px;font-weight:600}
+.placed{background:var(--green-light);color:var(--green-dark)}
+.notplaced{background:var(--rose-light);color:var(--rose-dark)}
+.pending{background:var(--peach-light);color:var(--peach-dark)}
+
+/* PREDICTION CARD */
+.predict-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
+.predict-card{background:var(--surface);border-radius:var(--radius-lg);border:1px solid var(--border);padding:22px}
+.input-group{margin-bottom:14px}
+.input-label{font-size:12px;font-weight:500;color:var(--text2);margin-bottom:6px;display:block}
+.input-field{width:100%;padding:9px 12px;border:1px solid var(--border2);border-radius:8px;font-size:13px;color:var(--text);background:var(--surface);font-family:'DM Sans',sans-serif;outline:none;transition:border-color .15s}
+.input-field:focus{border-color:var(--blue)}
+.range-field{-webkit-appearance:none;width:100%;height:4px;background:var(--border2);border-radius:10px;outline:none}
+.range-field::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--blue);cursor:pointer;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.2)}
+.prob-display{display:flex;flex-direction:column;align-items:center;gap:12px;padding:20px 0}
+.prob-ring{position:relative;width:140px;height:140px}
+.prob-ring svg{width:100%;height:100%}
+.prob-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.prob-number{font-size:30px;font-weight:700;color:var(--text)}
+.prob-sub{font-size:11px;color:var(--text3)}
+.strength-list{display:flex;flex-direction:column;gap:8px;margin-top:16px}
+.strength-item{display:flex;align-items:center;gap:8px;font-size:13px;padding:8px 12px;border-radius:8px}
+.strength-good{background:var(--green-light);color:var(--green-dark)}
+.strength-warn{background:var(--peach-light);color:var(--peach-dark)}
+.strength-bad{background:var(--rose-light);color:var(--rose-dark)}
+
+/* MOCK TEST */
+.test-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-bottom:24px}
+.test-card{background:var(--surface);border-radius:var(--radius-lg);border:1px solid var(--border);padding:22px;cursor:pointer;transition:all .2s}
+.test-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg);border-color:var(--border2)}
+.test-icon-wrap{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:14px}
+.test-name{font-size:15px;font-weight:600;color:var(--text);margin-bottom:4px}
+.test-desc{font-size:12.5px;color:var(--text3);line-height:1.5;margin-bottom:14px}
+.test-meta{display:flex;gap:12px}
+.test-metaitem{font-size:11.5px;color:var(--text3);display:flex;align-items:center;gap:4px}
+
+/* ATS */
+.ats-row{display:grid;grid-template-columns:1fr 1.5fr;gap:16px;margin-bottom:24px}
+.upload-zone{border:2px dashed var(--border2);border-radius:var(--radius-lg);padding:36px;display:flex;flex-direction:column;align-items:center;gap:10px;cursor:pointer;transition:all .2s;text-align:center}
+.upload-zone:hover{border-color:var(--blue);background:var(--blue-light)}
+.upload-icon{font-size:36px}
+.upload-text{font-size:14px;font-weight:500;color:var(--text2)}
+.upload-sub{font-size:12px;color:var(--text3)}
+.ats-score-section{background:var(--surface);border-radius:var(--radius-lg);border:1px solid var(--border);padding:22px}
+.ats-score-top{display:flex;gap:20px;align-items:center;margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid var(--border)}
+.big-score{font-size:52px;font-weight:700;line-height:1}
+.score-ring-track{height:6px;background:var(--surface2);border-radius:10px;overflow:hidden;margin-top:6px}
+.score-ring-fill{height:100%;border-radius:10px;background:linear-gradient(90deg,var(--peach),var(--blue))}
+.keyword-section{margin-top:16px}
+.keyword-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:10px}
+.keyword-chips{display:flex;flex-wrap:wrap;gap:6px}
+.kw-chip{font-size:11.5px;padding:4px 10px;border-radius:20px;font-weight:500}
+.kw-found{background:var(--green-light);color:var(--green-dark)}
+.kw-missing{background:var(--rose-light);color:var(--rose-dark)}
+
+/* NAV TABS */
+.nav-tabs{display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:24px}
+.nav-tab{padding:10px 18px;font-size:13.5px;font-weight:500;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s;background:none;border-top:none;border-left:none;border-right:none;font-family:'DM Sans',sans-serif}
+.nav-tab:hover{color:var(--text)}
+.nav-tab.active{color:var(--blue-dark);border-bottom-color:var(--blue)}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--text);color:#fff;padding:12px 18px;border-radius:10px;font-size:13px;opacity:0;transform:translateY(10px);transition:all .3s;z-index:999;max-width:280px}
+.toast.show{opacity:1;transform:translateY(0)}
+
+.section-hidden{display:none}
+.section-active{display:block}
+
+/* RESPONSIVE: scrollable at small widths */
+@media(max-width:900px){
+  .sidebar{width:60px}.sidebar-logo .logo-text,.sidebar-logo .logo-sub,.nav-item span:not(.nav-icon),.user-info,.nav-badge,.nav-section-title{display:none}
+  .main{margin-left:60px}.stats-grid{grid-template-columns:repeat(2,1fr)}.charts-row,.second-row,.predict-row,.ats-row,.test-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-mark">
+      <div class="logo-icon">🎓</div>
+      <div>
+        <div class="logo-text">PlaceIQ</div>
+        <div class="logo-sub">PLACEMENT ANALYTICS</div>
+      </div>
+    </div>
+  </div>
+  <div class="sidebar-nav">
+    <div class="nav-section-title">Overview</div>
+    <button class="nav-item active" onclick="switchSection('dashboard',this)"><span class="nav-icon">📊</span><span>Dashboard</span></button>
+    <button class="nav-item" onclick="switchSection('analytics',this)"><span class="nav-icon">📈</span><span>Analytics</span></button>
+    <div class="nav-section-title">Student Tools</div>
+    <button class="nav-item" onclick="switchSection('predict',this)"><span class="nav-icon">🤖</span><span>Predictor</span></button>
+    <button class="nav-item" onclick="switchSection('mocktest',this)"><span class="nav-icon">✏️</span><span>Mock Tests</span><span class="nav-badge">4</span></button>
+    <button class="nav-item" onclick="switchSection('resume',this)"><span class="nav-icon">📄</span><span>Resume ATS</span></button>
+    <div class="nav-section-title">Admin</div>
+    <button class="nav-item" onclick="switchSection('students',this)"><span class="nav-icon">👥</span><span>Students</span></button>
+    <button class="nav-item" onclick="switchSection('dashboard',this)"><span class="nav-icon">⚙️</span><span>Settings</span></button>
+  </div>
+  <div class="sidebar-footer">
+    <div class="user-card">
+      <div class="avatar">RK</div>
+      <div class="user-info">
+        <div class="name">Dr. R. Kumar</div>
+        <div class="role">Placement Officer</div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div>
+        <div class="page-title" id="page-title">Analytics Dashboard</div>
+        <div class="breadcrumb">2024–25 Placement Season</div>
+      </div>
+    </div>
+    <div class="topbar-actions">
+      <button class="btn btn-ghost" onclick="showToast('Dataset uploaded successfully!')">⬆ Upload Dataset</button>
+      <button class="btn btn-primary" onclick="showToast('Report exported as PDF!')">⬇ Export Report</button>
+      <button class="notif-btn">🔔<span class="notif-dot"></span></button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ====== DASHBOARD ====== -->
+    <div id="section-dashboard" class="section-active">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-top">
+            <div class="stat-icon" style="background:var(--blue-light)">👥</div>
+            <span class="stat-badge badge-up">↑ 12%</span>
+          </div>
+          <div class="stat-value">1,284</div>
+          <div class="stat-label">Total Students Registered</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-top">
+            <div class="stat-icon" style="background:var(--green-light)">✅</div>
+            <span class="stat-badge badge-up">↑ 8%</span>
+          </div>
+          <div class="stat-value">78.4%</div>
+          <div class="stat-label">Overall Placement Rate</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-top">
+            <div class="stat-icon" style="background:var(--peach-light)">💰</div>
+            <span class="stat-badge badge-up">↑ 15%</span>
+          </div>
+          <div class="stat-value">₹6.8L</div>
+          <div class="stat-label">Average Package Offered</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-top">
+            <div class="stat-icon" style="background:var(--lavender-light)">🏆</div>
+            <span class="stat-badge badge-up">↑ 32%</span>
+          </div>
+          <div class="stat-value">₹42L</div>
+          <div class="stat-label">Highest Package This Year</div>
+        </div>
+      </div>
+
+      <div class="charts-row">
+        <div class="chart-card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Department-wise Placement Rate</div>
+              <div class="card-sub">Placed vs Not Placed across departments</div>
+            </div>
+            <span class="chip chip-blue">2024–25</span>
+          </div>
+          <div class="bar-chart" id="dept-chart"></div>
+        </div>
+        <div class="chart-card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Placement Status</div>
+              <div class="card-sub">Overall distribution</div>
+            </div>
+          </div>
+          <div class="donut-wrap">
+            <svg class="donut-svg" viewBox="0 0 140 140">
+              <circle cx="70" cy="70" r="52" fill="none" stroke="#F2F0EC" stroke-width="18"/>
+              <circle cx="70" cy="70" r="52" fill="none" stroke="#4CAF7D" stroke-width="18" stroke-dasharray="205 121" stroke-dashoffset="-16" stroke-linecap="round"/>
+              <circle cx="70" cy="70" r="52" fill="none" stroke="#E8895A" stroke-width="18" stroke-dasharray="68 258" stroke-dashoffset="-221" stroke-linecap="round"/>
+              <circle cx="70" cy="70" r="52" fill="none" stroke="#8B72D4" stroke-width="18" stroke-dasharray="53 273" stroke-dashoffset="-289" stroke-linecap="round"/>
+              <text x="70" y="65" text-anchor="middle" font-size="20" font-weight="700" fill="#1E1E2D" font-family="DM Sans">78%</text>
+              <text x="70" y="82" text-anchor="middle" font-size="10" fill="#9898A8" font-family="DM Sans">Placed</text>
+            </svg>
+            <div class="donut-legend">
+              <div class="legend-row"><span class="legend-dot" style="background:#4CAF7D"></span><span class="legend-label">Placed</span><span class="legend-pct">78.4%</span></div>
+              <div class="legend-row"><span class="legend-dot" style="background:#E8895A"></span><span class="legend-label">Not Placed</span><span class="legend-pct">14.2%</span></div>
+              <div class="legend-row"><span class="legend-dot" style="background:#8B72D4"></span><span class="legend-label">In Process</span><span class="legend-pct">7.4%</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="second-row">
+        <div class="chart-card">
+          <div class="card-header"><div><div class="card-title">Top Skills in Demand</div><div class="card-sub">By placement success rate</div></div><span class="chip chip-green">Live</span></div>
+          <div class="skill-list">
+            <div class="skill-item"><div class="skill-meta"><span class="skill-name">Python / Data Science</span><span class="skill-pct">94%</span></div><div class="skill-track"><div class="skill-fill" style="width:94%;background:var(--blue)"></div></div></div>
+            <div class="skill-item"><div class="skill-meta"><span class="skill-name">Java / Spring Boot</span><span class="skill-pct">88%</span></div><div class="skill-track"><div class="skill-fill" style="width:88%;background:var(--lavender)"></div></div></div>
+            <div class="skill-item"><div class="skill-meta"><span class="skill-name">React / Frontend</span><span class="skill-pct">82%</span></div><div class="skill-track"><div class="skill-fill" style="width:82%;background:var(--teal)"></div></div></div>
+            <div class="skill-item"><div class="skill-meta"><span class="skill-name">Communication</span><span class="skill-pct">79%</span></div><div class="skill-track"><div class="skill-fill" style="width:79%;background:var(--peach)"></div></div></div>
+            <div class="skill-item"><div class="skill-meta"><span class="skill-name">SQL / Databases</span><span class="skill-pct">71%</span></div><div class="skill-track"><div class="skill-fill" style="width:71%;background:var(--green)"></div></div></div>
+          </div>
+        </div>
+        <div class="chart-card">
+          <div class="card-header"><div><div class="card-title">AI Insights</div><div class="card-sub">Key employability factors</div></div><span class="chip chip-lavender">AI</span></div>
+          <div class="insight-list">
+            <div class="insight-item" onclick="showToast('Deep-diving into CGPA analysis...')">
+              <span class="insight-icon">📐</span>
+              <div class="insight-text"><strong>CGPA Threshold</strong>Students with CGPA ≥ 7.5 have 2.3× higher selection rates.</div>
+            </div>
+            <div class="insight-item" onclick="showToast('Internship impact report loading...')">
+              <span class="insight-icon">🏢</span>
+              <div class="insight-text"><strong>Internship Impact</strong>Students with 2+ internships earn 38% more on avg.</div>
+            </div>
+            <div class="insight-item" onclick="showToast('Communication score analysis ready...')">
+              <span class="insight-icon">🗣</span>
+              <div class="insight-text"><strong>Communication Gap</strong>40% of rejections linked to poor verbal scores.</div>
+            </div>
+            <div class="insight-item" onclick="showToast('Certificate analysis loading...')">
+              <span class="insight-icon">📜</span>
+              <div class="insight-text"><strong>Certifications</strong>3+ certifications increases offer chances by 28%.</div>
+            </div>
+          </div>
+        </div>
+        <div class="chart-card">
+          <div class="card-header"><div><div class="card-title">CGPA vs Placement</div><div class="card-sub">Scatter distribution</div></div></div>
+          <svg class="scatter-svg" viewBox="0 0 240 160" style="overflow:visible">
+            <line x1="30" y1="10" x2="30" y2="135" stroke="#E4E2DC" stroke-width="1"/>
+            <line x1="30" y1="135" x2="230" y2="135" stroke="#E4E2DC" stroke-width="1"/>
+            <text x="28" y="138" text-anchor="end" font-size="8" fill="#9898A8" font-family="DM Sans">6.0</text>
+            <text x="68" y="138" text-anchor="end" font-size="8" fill="#9898A8" font-family="DM Sans">7.0</text>
+            <text x="118" y="138" text-anchor="end" font-size="8" fill="#9898A8" font-family="DM Sans">8.0</text>
+            <text x="168" y="138" text-anchor="end" font-size="8" fill="#9898A8" font-family="DM Sans">9.0</text>
+            <text x="218" y="138" text-anchor="end" font-size="8" fill="#9898A8" font-family="DM Sans">10</text>
+            <g id="scatter-dots"></g>
+          </svg>
+        </div>
+      </div>
+
+      <div class="table-card">
+        <div class="table-header-bar">
+          <div><div class="card-title">Recent Student Activity</div><div class="card-sub">Latest placement updates</div></div>
+          <button class="btn btn-ghost" onclick="switchSection('students',document.querySelector('.nav-item:nth-child(8)'))">View All</button>
+        </div>
+        <table>
+          <thead><tr><th>Student Name</th><th>Department</th><th>CGPA</th><th>Company</th><th>Package</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td><b>Ananya Sharma</b></td><td>CSE</td><td>9.1</td><td>Google India</td><td>₹42L</td><td><span class="status-pill placed">Placed</span></td></tr>
+            <tr><td><b>Ravi Chandra</b></td><td>ECE</td><td>8.4</td><td>Infosys</td><td>₹6.5L</td><td><span class="status-pill placed">Placed</span></td></tr>
+            <tr><td><b>Priya Mehta</b></td><td>IT</td><td>7.8</td><td>TCS</td><td>₹7L</td><td><span class="status-pill placed">Placed</span></td></tr>
+            <tr><td><b>Karan Verma</b></td><td>MECH</td><td>6.9</td><td>—</td><td>—</td><td><span class="status-pill pending">In Process</span></td></tr>
+            <tr><td><b>Sneha Pillai</b></td><td>CSE</td><td>8.0</td><td>Wipro</td><td>₹5.5L</td><td><span class="status-pill placed">Placed</span></td></tr>
+            <tr><td><b>Arun Das</b></td><td>CIVIL</td><td>6.2</td><td>—</td><td>—</td><td><span class="status-pill notplaced">Not Placed</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ====== ANALYTICS ====== -->
+    <div id="section-analytics" class="section-hidden">
+      <div class="nav-tabs">
+        <button class="nav-tab active" onclick="setTab(this,'tab-overview')">Overview</button>
+        <button class="nav-tab" onclick="setTab(this,'tab-dept')">By Department</button>
+        <button class="nav-tab" onclick="setTab(this,'tab-skills')">Skills Analysis</button>
+        <button class="nav-tab" onclick="setTab(this,'tab-salary')">Salary Trends</button>
+      </div>
+      <div id="tab-overview">
+        <div class="stats-grid">
+          <div class="stat-card"><div class="stat-top"><div class="stat-icon" style="background:var(--blue-light)">🏫</div><span class="stat-badge badge-up">12 Depts</span></div><div class="stat-value">4</div><div class="stat-label">Datasets Uploaded</div></div>
+          <div class="stat-card"><div class="stat-top"><div class="stat-icon" style="background:var(--green-light)">🤝</div><span class="stat-badge badge-up">+23</span></div><div class="stat-value">148</div><div class="stat-label">Companies Visited</div></div>
+          <div class="stat-card"><div class="stat-top"><div class="stat-icon" style="background:var(--lavender-light)">🧠</div><span class="stat-badge badge-up">96.2%</span></div><div class="stat-value">RF</div><div class="stat-label">Best ML Model</div></div>
+          <div class="stat-card"><div class="stat-top"><div class="stat-icon" style="background:var(--peach-light)">⚡</div></div><div class="stat-value">2.4s</div><div class="stat-label">Avg Prediction Time</div></div>
+        </div>
+        <div class="charts-row" style="grid-template-columns:1fr 1fr">
+          <div class="chart-card">
+            <div class="card-header"><div class="card-title">ML Model Accuracy Comparison</div></div>
+            <div style="display:flex;flex-direction:column;gap:16px;padding-top:8px">
+              <div><div style="display:flex;justify-content:space-between;margin-bottom:6px"><span style="font-size:13px;color:var(--text2)">Random Forest</span><span style="font-size:13px;font-weight:600;color:var(--green-dark)">96.2%</span></div><div class="skill-track"><div class="skill-fill" style="width:96.2%;background:var(--green)"></div></div></div>
+              <div><div style="display:flex;justify-content:space-between;margin-bottom:6px"><span style="font-size:13px;color:var(--text2)">Decision Tree</span><span style="font-size:13px;font-weight:600;color:var(--blue-dark)">91.8%</span></div><div class="skill-track"><div class="skill-fill" style="width:91.8%;background:var(--blue)"></div></div></div>
+              <div><div style="display:flex;justify-content:space-between;margin-bottom:6px"><span style="font-size:13px;color:var(--text2)">Logistic Regression</span><span style="font-size:13px;font-weight:600;color:var(--lavender-dark)">87.4%</span></div><div class="skill-track"><div class="skill-fill" style="width:87.4%;background:var(--lavender)"></div></div></div>
+            </div>
+          </div>
+          <div class="chart-card">
+            <div class="card-header"><div class="card-title">Feature Importance</div><div class="card-sub">Top factors for placement</div></div>
+            <div id="feature-chart" style="display:flex;flex-direction:column;gap:10px;padding-top:4px"></div>
+          </div>
+        </div>
+      </div>
+      <div id="tab-dept" style="display:none">
+        <div class="chart-card"><div class="card-header"><div class="card-title">Department Comparison</div></div><div class="bar-chart" id="dept-chart-2" style="height:200px"></div></div>
+      </div>
+      <div id="tab-skills" style="display:none">
+        <div class="chart-card"><div class="card-header"><div class="card-title">Skills vs Placement Success Rate</div></div><div class="bar-chart" id="skill-chart-analytics" style="height:200px"></div></div>
+      </div>
+      <div id="tab-salary" style="display:none">
+        <div class="chart-card"><div class="card-header"><div class="card-title">Salary Distribution by CGPA Band</div></div>
+          <div style="display:flex;gap:16px;flex-wrap:wrap;padding-top:8px">
+            <div style="flex:1;min-width:200px"><div style="font-size:12px;color:var(--text3);margin-bottom:8px">CGPA 6–7</div><div style="font-size:22px;font-weight:600;color:var(--text)">₹4.2L</div><div style="font-size:12px;color:var(--text3)">avg package</div></div>
+            <div style="flex:1;min-width:200px"><div style="font-size:12px;color:var(--text3);margin-bottom:8px">CGPA 7–8</div><div style="font-size:22px;font-weight:600;color:var(--blue-dark)">₹6.8L</div><div style="font-size:12px;color:var(--text3)">avg package</div></div>
+            <div style="flex:1;min-width:200px"><div style="font-size:12px;color:var(--text3);margin-bottom:8px">CGPA 8–9</div><div style="font-size:22px;font-weight:600;color:var(--green-dark)">₹11.4L</div><div style="font-size:12px;color:var(--text3)">avg package</div></div>
+            <div style="flex:1;min-width:200px"><div style="font-size:12px;color:var(--text3);margin-bottom:8px">CGPA 9–10</div><div style="font-size:22px;font-weight:600;color:var(--lavender-dark)">₹24.8L</div><div style="font-size:12px;color:var(--text3)">avg package</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====== PREDICTOR ====== -->
+    <div id="section-predict" class="section-hidden">
+      <div class="predict-row">
+        <div class="predict-card">
+          <div class="card-header"><div class="card-title">Student Profile Input</div><div class="card-sub">Fill details for AI prediction</div></div>
+          <div class="input-group"><label class="input-label">CGPA (out of 10)</label><input class="input-field" type="number" value="8.2" min="0" max="10" step="0.1" id="cgpa-input" oninput="updatePrediction()"></div>
+          <div class="input-group"><label class="input-label">Aptitude Score (%)</label><input type="range" class="range-field" min="0" max="100" value="72" id="apt-input" oninput="document.getElementById('apt-val').textContent=this.value+'%';updatePrediction()"><div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-top:4px"><span>0%</span><span id="apt-val">72%</span><span>100%</span></div></div>
+          <div class="input-group"><label class="input-label">Communication Score (1–10)</label><input type="range" class="range-field" min="1" max="10" value="7" id="comm-input" oninput="document.getElementById('comm-val').textContent=this.value+'/10';updatePrediction()"><div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-top:4px"><span>1</span><span id="comm-val">7/10</span><span>10</span></div></div>
+          <div class="input-group"><label class="input-label">Internships Completed</label><input class="input-field" type="number" value="2" min="0" max="10" id="intern-input" oninput="updatePrediction()"></div>
+          <div class="input-group"><label class="input-label">Projects Done</label><input class="input-field" type="number" value="3" min="0" max="20" id="proj-input" oninput="updatePrediction()"></div>
+          <div class="input-group"><label class="input-label">Certifications</label><input class="input-field" type="number" value="2" min="0" max="20" id="cert-input" oninput="updatePrediction()"></div>
+          <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:8px" onclick="updatePrediction();showToast('Prediction updated!')">🤖 Run AI Prediction</button>
+        </div>
+        <div class="predict-card">
+          <div class="card-header"><div class="card-title">Placement Prediction</div><div class="card-sub">Random Forest Model (96.2% accuracy)</div></div>
+          <div class="prob-display">
+            <div class="prob-ring">
+              <svg viewBox="0 0 140 140">
+                <circle cx="70" cy="70" r="56" fill="none" stroke="#F2F0EC" stroke-width="12"/>
+                <circle cx="70" cy="70" r="56" fill="none" stroke="#5B9BD5" stroke-width="12" stroke-linecap="round" stroke-dasharray="352" stroke-dashoffset="70" id="prob-circle" style="transform:rotate(-90deg);transform-origin:70px 70px;transition:stroke-dashoffset .8s"/>
+              </svg>
+              <div class="prob-center">
+                <div class="prob-number" id="prob-number">82%</div>
+                <div class="prob-sub">Probability</div>
+              </div>
+            </div>
+            <div style="font-size:14px;font-weight:600;color:var(--green-dark);background:var(--green-light);padding:8px 20px;border-radius:20px" id="predict-verdict">✅ High Placement Chance</div>
+          </div>
+          <div class="strength-list">
+            <div class="strength-item strength-good">✅ CGPA above placement threshold</div>
+            <div class="strength-item strength-good">✅ Good internship experience</div>
+            <div class="strength-item strength-warn" id="comm-warn">⚠ Communication needs improvement</div>
+            <div class="strength-item strength-bad" id="cert-warn">❌ More certifications recommended</div>
+          </div>
+          <div style="margin-top:16px;padding:14px;background:var(--blue-light);border-radius:10px">
+            <div style="font-size:12px;font-weight:600;color:var(--blue-dark);margin-bottom:6px">💡 AI Recommendation</div>
+            <div style="font-size:12.5px;color:var(--text2);line-height:1.5" id="rec-text">Improve communication skills + get 1 more certification to boost chances by ~15%.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====== MOCK TEST ====== -->
+    <div id="section-mocktest" class="section-hidden">
+      <div style="margin-bottom:20px;padding:18px 22px;background:var(--surface);border-radius:var(--radius-lg);border:1px solid var(--border);display:flex;align-items:center;gap:16px">
+        <div style="font-size:32px">🏆</div>
+        <div>
+          <div style="font-size:15px;font-weight:600;color:var(--text)">Your Test Performance</div>
+          <div style="font-size:13px;color:var(--text3);margin-top:2px">Avg Score: <strong style="color:var(--blue-dark)">74%</strong> · Tests Taken: <strong style="color:var(--text)">8</strong> · Rank: <strong style="color:var(--green-dark)">#23 of 1284</strong></div>
+        </div>
+        <div style="margin-left:auto;display:flex;gap:10px">
+          <button class="btn btn-ghost" onclick="showToast('Leaderboard coming soon!')">🏅 Leaderboard</button>
+          <button class="btn btn-primary" onclick="showToast('Opening practice mode...')">▶ Practice Mode</button>
+        </div>
+      </div>
+      <div class="test-grid">
+        <div class="test-card" onclick="showToast('Starting Aptitude Test...')">
+          <div class="test-icon-wrap" style="background:var(--blue-light)">🧮</div>
+          <div class="test-name">Quantitative Aptitude</div>
+          <div class="test-desc">Number series, percentages, profit/loss, time & work, and more. Covers all major aptitude patterns.</div>
+          <div class="test-meta"><span class="test-metaitem">⏱ 30 min</span><span class="test-metaitem">📝 40 Qs</span><span class="chip chip-green" style="margin-left:auto;font-size:10px">Best: 78%</span></div>
+        </div>
+        <div class="test-card" onclick="showToast('Starting Verbal Test...')">
+          <div class="test-icon-wrap" style="background:var(--lavender-light)">📖</div>
+          <div class="test-name">Verbal Ability</div>
+          <div class="test-desc">Grammar, reading comprehension, sentence correction, para-jumbles, and vocabulary enhancement.</div>
+          <div class="test-meta"><span class="test-metaitem">⏱ 25 min</span><span class="test-metaitem">📝 35 Qs</span><span class="chip chip-lavender" style="margin-left:auto;font-size:10px">Best: 65%</span></div>
+        </div>
+        <div class="test-card" onclick="showToast('Starting Technical Test...')">
+          <div class="test-icon-wrap" style="background:var(--teal-light)">💻</div>
+          <div class="test-name">Technical MCQs</div>
+          <div class="test-desc">DSA, DBMS, OS, CN, OOP — all core CS subjects. Randomized questions from question bank of 1000+.</div>
+          <div class="test-meta"><span class="test-metaitem">⏱ 45 min</span><span class="test-metaitem">📝 50 Qs</span><span class="chip chip-blue" style="margin-left:auto;font-size:10px">Best: 82%</span></div>
+        </div>
+        <div class="test-card" onclick="showToast('Opening Interview Practice...')">
+          <div class="test-icon-wrap" style="background:var(--peach-light)">🎙</div>
+          <div class="test-name">Interview Simulator</div>
+          <div class="test-desc">AI-generated behavioral and situational questions. Patterns from FAANG, TCS, Infosys and more.</div>
+          <div class="test-meta"><span class="test-metaitem">⏱ 20 min</span><span class="test-metaitem">🎯 Open-ended</span><span class="chip chip-peach" style="margin-left:auto;font-size:10px">New!</span></div>
+        </div>
+      </div>
+      <div class="chart-card">
+        <div class="card-header"><div class="card-title">Performance Trend</div><div class="card-sub">Your last 6 tests</div></div>
+        <svg width="100%" viewBox="0 0 600 100" style="overflow:visible">
+          <polyline points="40,80 140,60 240,55 340,42 440,30 540,22" fill="none" stroke="var(--blue)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <polyline points="40,80 140,60 240,55 340,42 440,30 540,22" fill="var(--blue-light)" stroke="none" opacity=".5"/>
+          <circle cx="40" cy="80" r="5" fill="var(--surface)" stroke="var(--blue)" stroke-width="2"/>
+          <circle cx="140" cy="60" r="5" fill="var(--surface)" stroke="var(--blue)" stroke-width="2"/>
+          <circle cx="240" cy="55" r="5" fill="var(--surface)" stroke="var(--blue)" stroke-width="2"/>
+          <circle cx="340" cy="42" r="5" fill="var(--surface)" stroke="var(--blue)" stroke-width="2"/>
+          <circle cx="440" cy="30" r="5" fill="var(--surface)" stroke="var(--blue)" stroke-width="2"/>
+          <circle cx="540" cy="22" r="5" fill="var(--blue)" stroke="var(--blue)" stroke-width="2"/>
+          <text x="40" y="95" text-anchor="middle" font-size="10" fill="#9898A8" font-family="DM Sans">Test 1</text>
+          <text x="140" y="95" text-anchor="middle" font-size="10" fill="#9898A8" font-family="DM Sans">Test 2</text>
+          <text x="240" y="95" text-anchor="middle" font-size="10" fill="#9898A8" font-family="DM Sans">Test 3</text>
+          <text x="340" y="95" text-anchor="middle" font-size="10" fill="#9898A8" font-family="DM Sans">Test 4</text>
+          <text x="440" y="95" text-anchor="middle" font-size="10" fill="#9898A8" font-family="DM Sans">Test 5</text>
+          <text x="540" y="95" text-anchor="middle" font-size="10" fill="#9898A8" font-family="DM Sans">Test 6</text>
+          <text x="46" y="76" font-size="9" fill="var(--blue-dark)" font-family="DM Sans">54%</text>
+          <text x="546" y="18" font-size="9" fill="var(--blue-dark)" font-family="DM Sans">84%</text>
+        </svg>
+      </div>
+    </div>
+
+    <!-- ====== RESUME ====== -->
+    <div id="section-resume" class="section-hidden">
+      <div class="ats-row">
+        <div class="predict-card">
+          <div class="card-header"><div class="card-title">Upload Resume</div><div class="card-sub">PDF or DOCX format</div></div>
+          <div class="upload-zone" onclick="showToast('Resume uploaded! ATS analysis running...');setTimeout(()=>{document.getElementById('ats-result').style.display='block'},800)">
+            <div class="upload-icon">📄</div>
+            <div class="upload-text">Drop your resume here</div>
+            <div class="upload-sub">or click to browse — PDF / DOCX</div>
+          </div>
+          <div style="margin-top:18px">
+            <div class="input-label" style="margin-bottom:10px;display:block;font-weight:600">Target Job Role</div>
+            <select class="input-field" style="width:100%">
+              <option>Software Engineer (SDE-1)</option>
+              <option>Data Analyst</option>
+              <option>Product Manager</option>
+              <option>DevOps Engineer</option>
+              <option>ML Engineer</option>
+            </select>
+          </div>
+          <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:14px" onclick="showToast('ATS analysis complete!')">⚡ Analyze Resume</button>
+        </div>
+        <div class="ats-score-section" id="ats-result">
+          <div class="card-header"><div class="card-title">ATS Score Report</div><span class="chip chip-green">Analyzed</span></div>
+          <div class="ats-score-top">
+            <div>
+              <div style="font-size:12px;color:var(--text3);margin-bottom:4px">ATS Score</div>
+              <div class="big-score" style="color:var(--blue-dark)">72</div>
+              <div class="score-ring-track" style="width:120px"><div class="score-ring-fill" style="width:72%"></div></div>
+              <div style="font-size:11px;color:var(--text3);margin-top:4px">out of 100</div>
+            </div>
+            <div style="flex:1">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+                <div style="padding:10px;background:var(--green-light);border-radius:10px"><div style="font-size:10px;color:var(--green-dark);font-weight:600">Keywords</div><div style="font-size:18px;font-weight:700;color:var(--green-dark)">68%</div></div>
+                <div style="padding:10px;background:var(--blue-light);border-radius:10px"><div style="font-size:10px;color:var(--blue-dark);font-weight:600">Skills Match</div><div style="font-size:18px;font-weight:700;color:var(--blue-dark)">80%</div></div>
+                <div style="padding:10px;background:var(--peach-light);border-radius:10px"><div style="font-size:10px;color:var(--peach-dark);font-weight:600">Formatting</div><div style="font-size:18px;font-weight:700;color:var(--peach-dark)">75%</div></div>
+                <div style="padding:10px;background:var(--lavender-light);border-radius:10px"><div style="font-size:10px;color:var(--lavender-dark);font-weight:600">Experience</div><div style="font-size:18px;font-weight:700;color:var(--lavender-dark)">65%</div></div>
+              </div>
+            </div>
+          </div>
+          <div class="keyword-section">
+            <div class="keyword-title">✅ Keywords Found</div>
+            <div class="keyword-chips">
+              <span class="kw-chip kw-found">Python</span><span class="kw-chip kw-found">React</span><span class="kw-chip kw-found">REST API</span><span class="kw-chip kw-found">Agile</span><span class="kw-chip kw-found">Git</span><span class="kw-chip kw-found">SQL</span>
+            </div>
+          </div>
+          <div class="keyword-section" style="margin-top:12px">
+            <div class="keyword-title">❌ Missing Keywords</div>
+            <div class="keyword-chips">
+              <span class="kw-chip kw-missing">Docker</span><span class="kw-chip kw-missing">Kubernetes</span><span class="kw-chip kw-missing">CI/CD</span><span class="kw-chip kw-missing">System Design</span>
+            </div>
+          </div>
+          <div style="margin-top:14px;padding:12px;background:var(--peach-light);border-radius:10px">
+            <div style="font-size:12px;font-weight:600;color:var(--peach-dark);margin-bottom:4px">💡 Top Suggestion</div>
+            <div style="font-size:12.5px;color:var(--text2)">Add Docker, CI/CD, and System Design keywords. Quantify achievements in bullet points for +18 score boost.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====== STUDENTS TABLE ====== -->
+    <div id="section-students" class="section-hidden">
+      <div class="topbar-actions" style="margin-bottom:16px;justify-content:flex-start">
+        <button class="btn btn-ghost">Filter by Dept ▾</button>
+        <button class="btn btn-ghost">CGPA Range ▾</button>
+        <button class="btn btn-ghost">Status ▾</button>
+        <button class="btn btn-primary" style="margin-left:auto" onclick="showToast('Student data exported!')">⬇ Export CSV</button>
+      </div>
+      <div class="table-card" style="margin-bottom:0">
+        <table>
+          <thead><tr><th>ID</th><th>Name</th><th>Dept</th><th>CGPA</th><th>Skills</th><th>Internships</th><th>Apt Score</th><th>Package</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>#001</td><td><b>Ananya Sharma</b></td><td>CSE</td><td>9.1</td><td><span class="chip chip-blue">Python</span> <span class="chip chip-lavender">ML</span></td><td>3</td><td>92%</td><td>₹42L</td><td><span class="status-pill placed">Placed</span></td></tr>
+            <tr><td>#002</td><td><b>Ravi Chandra</b></td><td>ECE</td><td>8.4</td><td><span class="chip chip-blue">C++</span> <span class="chip chip-green">VLSI</span></td><td>2</td><td>78%</td><td>₹6.5L</td><td><span class="status-pill placed">Placed</span></td></tr>
+            <tr><td>#003</td><td><b>Priya Mehta</b></td><td>IT</td><td>7.8</td><td><span class="chip chip-lavender">React</span> <span class="chip chip-blue">Java</span></td><td>1</td><td>74%</td><td>₹7L</td><td><span class="status-pill placed">Placed</span></td></tr>
+            <tr><td>#004</td><td><b>Karan Verma</b></td><td>MECH</td><td>6.9</td><td><span class="chip chip-peach">AutoCAD</span></td><td>1</td><td>61%</td><td>—</td><td><span class="status-pill pending">In Process</span></td></tr>
+            <tr><td>#005</td><td><b>Sneha Pillai</b></td><td>CSE</td><td>8.0</td><td><span class="chip chip-blue">Python</span> <span class="chip chip-green">SQL</span></td><td>2</td><td>81%</td><td>₹5.5L</td><td><span class="status-pill placed">Placed</span></td></tr>
+            <tr><td>#006</td><td><b>Arun Das</b></td><td>CIVIL</td><td>6.2</td><td><span class="chip chip-peach">AutoCAD</span></td><td>0</td><td>48%</td><td>—</td><td><span class="status-pill notplaced">Not Placed</span></td></tr>
+            <tr><td>#007</td><td><b>Divya Nair</b></td><td>CSE</td><td>8.8</td><td><span class="chip chip-lavender">ML</span> <span class="chip chip-blue">Python</span></td><td>3</td><td>89%</td><td>₹18L</td><td><span class="status-pill placed">Placed</span></td></tr>
+            <tr><td>#008</td><td><b>Mohit Joshi</b></td><td>EEE</td><td>7.2</td><td><span class="chip chip-blue">Embedded</span></td><td>1</td><td>66%</td><td>₹4L</td><td><span class="status-pill placed">Placed</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// NAV
+function switchSection(id, el){
+  document.querySelectorAll('[id^="section-"]').forEach(s=>{s.className='section-hidden'});
+  document.getElementById('section-'+id).className='section-active';
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  el.classList.add('active');
+  const titles={dashboard:'Analytics Dashboard',analytics:'Deep Analytics',predict:'Placement Predictor',mocktest:'Mock Test Center',resume:'Resume ATS Analyzer',students:'Student Database'};
+  document.getElementById('page-title').textContent=titles[id]||'Dashboard';
+}
+
+// TABS
+function setTab(el,id){
+  el.closest('.section-active').querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  const parent=el.closest('.section-active');
+  parent.querySelectorAll('[id^="tab-"]').forEach(t=>t.style.display='none');
+  document.getElementById(id).style.display='';
+}
+
+// TOAST
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+// DEPT BAR CHART
+function makeDeptChart(containerId){
+  const depts=[['CSE',92,8],['IT',85,15],['ECE',78,22],['MECH',62,38],['CIVIL',54,46],['EEE',71,29]];
+  const colors=['#5B9BD5','#4CAF7D','#8B72D4','#E8895A','#4FBBBB','#D4698A'];
+  const el=document.getElementById(containerId);if(!el)return;
+  el.innerHTML=depts.map(([d,p,n],i)=>`
+    <div class="bar-group">
+      <div class="bar-track">
+        <div class="bar" style="width:42%;height:${p*1.1}px;background:${colors[i]};opacity:.85" title="${p}% placed"></div>
+        <div class="bar" style="width:42%;height:${n*1.1}px;background:${colors[i]};opacity:.3" title="${n}% not placed"></div>
+      </div>
+      <div class="bar-label">${d}</div>
+    </div>`).join('');
+}
+makeDeptChart('dept-chart');
+makeDeptChart('dept-chart-2');
+
+// SKILLS ANALYTICS
+function makeSkillChart(){
+  const skills=[['Python',94],['Java',88],['React',82],['SQL',79],['DSA',76],['ML',72]];
+  const el=document.getElementById('skill-chart-analytics');if(!el)return;
+  el.innerHTML=skills.map(([s,v])=>`
+    <div class="bar-group" style="flex:1">
+      <div class="bar-track" style="height:160px;flex-direction:column;justify-content:flex-end">
+        <div class="bar" style="width:80%;height:${v*1.4}px;background:#5B9BD5;margin:0 auto"></div>
+      </div>
+      <div class="bar-label">${s}</div>
+    </div>`).join('');
+}
+makeSkillChart();
+
+// SCATTER DOTS
+function makeScatter(){
+  const svg=document.getElementById('scatter-dots');if(!svg)return;
+  const data=Array.from({length:60},()=>{const cgpa=6+Math.random()*4;const placed=cgpa>7.5?Math.random()>0.25:Math.random()>0.7;return[cgpa,placed]});
+  svg.innerHTML=data.map(([c,p])=>{const x=30+(c-6)/4*200;const y=10+Math.random()*120;return`<circle cx="${x}" cy="${y}" r="3.5" fill="${p?'#4CAF7D':'#E8895A'}" opacity="0.7" cursor="pointer"/>`}).join('');
+}
+makeScatter();
+
+// FEATURE IMPORTANCE
+const features=[['CGPA',89],['Aptitude',78],['Internship',74],['Skills',70],['Projects',61],['Communication',58]];
+const fi=document.getElementById('feature-chart');
+if(fi)fi.innerHTML=features.map(([f,v])=>`
+  <div><div style="display:flex;justify-content:space-between;margin-bottom:5px"><span style="font-size:12px;color:var(--text2)">${f}</span><span style="font-size:12px;font-weight:600;color:var(--text)">${v}%</span></div>
+  <div class="skill-track"><div class="skill-fill" style="width:${v}%;background:linear-gradient(90deg,#8B72D4,#5B9BD5)"></div></div></div>`).join('');
+
+// PREDICTION ENGINE
+function updatePrediction(){
+  const cgpa=parseFloat(document.getElementById('cgpa-input').value)||7;
+  const apt=parseInt(document.getElementById('apt-input').value)||60;
+  const comm=parseInt(document.getElementById('comm-input').value)||5;
+  const intern=parseInt(document.getElementById('intern-input').value)||0;
+  const proj=parseInt(document.getElementById('proj-input').value)||0;
+  const cert=parseInt(document.getElementById('cert-input').value)||0;
+  let score=0;
+  score+=Math.min(cgpa/10*35,35);
+  score+=Math.min(apt/100*20,20);
+  score+=Math.min(comm/10*15,15);
+  score+=Math.min(intern*8,16);
+  score+=Math.min(proj*2,8);
+  score+=Math.min(cert*3,6);
+  score=Math.round(Math.min(score,98));
+  document.getElementById('prob-number').textContent=score+'%';
+  const circ=document.getElementById('prob-circle');
+  const dash=352*(1-score/100);
+  circ.style.strokeDashoffset=dash;
+  circ.style.stroke=score>=75?'#4CAF7D':score>=50?'#5B9BD5':'#E8895A';
+  const verdict=document.getElementById('predict-verdict');
+  if(score>=75){verdict.textContent='✅ High Placement Chance';verdict.style.background='var(--green-light)';verdict.style.color='var(--green-dark)'}
+  else if(score>=50){verdict.textContent='⚠ Moderate Placement Chance';verdict.style.background='var(--peach-light)';verdict.style.color='var(--peach-dark)'}
+  else{verdict.textContent='❌ Low Placement Chance';verdict.style.background='var(--rose-light)';verdict.style.color='var(--rose-dark)'}
+  document.getElementById('comm-warn').className='strength-item '+(comm>=7?'strength-good':'strength-warn');
+  document.getElementById('comm-warn').textContent=(comm>=7?'✅ Good communication score':'⚠ Communication needs improvement');
+  document.getElementById('cert-warn').className='strength-item '+(cert>=3?'strength-good':'strength-bad');
+  document.getElementById('cert-warn').textContent=(cert>=3?'✅ Solid certifications':'❌ More certifications recommended');
+  const recs=[];
+  if(comm<7)recs.push('improve communication skills');
+  if(cert<3)recs.push('add more certifications');
+  if(intern<2)recs.push('complete an internship');
+  if(cgpa<7.5)recs.push('improve CGPA');
+  document.getElementById('rec-text').textContent=recs.length?'Focus on: '+recs.join(', ')+' to boost your placement chances.':'Great profile! Practice mock interviews to maximize your chances.';
+}
+updatePrediction();
+</script>
+</body>
+</html>
